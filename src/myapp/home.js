@@ -4,7 +4,7 @@ import Search from "antd/lib/transfer/search";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   setDeleteInfo,
   setEditInfo,
@@ -49,7 +49,6 @@ function Home() {
   }, []);
 
   const fetchPerson = async () => {
-    //debugger;
     try {
       const fetchData = await axios.get("http://localhost:5000/api/posts");
       dispatch(setSignInUser(fetchData.data));
@@ -122,7 +121,6 @@ function Home() {
 
   //-----save update data--------
   const onUpdate = async (e, id) => {
-    //debugger;
     e.preventDefault();
     setShow(true);
     try {
@@ -195,7 +193,7 @@ function Home() {
               className="adduser"
               onClick={(e) => onAdd(e, newUser)}
             >
-              Add
+              Add New User
             </button>
           </form>
         </div>
@@ -240,7 +238,7 @@ function Home() {
         <br />
         <br />
 
-        <div>Total {allData.length} Data Filter</div>
+        <div>Total: {allData.length} Data Filter</div>
 
         {/* ------------table------------ */}
         <Table
@@ -273,14 +271,14 @@ function Home() {
                   danger
                   onClick={() => onDelete(showList.id)}
                 >
-                  Delete
+                  DELETE
                 </Button>
                 <Button
                   size="small"
                   style={{ borderColor: "blue", color: "blue" }}
                   onClick={() => onEdit(showList.id)}
                 >
-                  Edit
+                  EDIT
                 </Button>
               </Space>
             )}
@@ -291,4 +289,3 @@ function Home() {
   );
 }
 export default Home;
-
