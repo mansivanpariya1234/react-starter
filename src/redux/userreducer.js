@@ -8,7 +8,6 @@ import {
   SAVE,
   SEARCH,
   FILTER,
-  FIND,
 } from "./actiontype";
 
 const initial_state = {
@@ -16,7 +15,6 @@ const initial_state = {
   editData: {},
   searchData: [],
   filterData: [],
-  findData: {},
 };
 
 const reducer = (state = initial_state, action) => {
@@ -124,23 +122,6 @@ const reducer = (state = initial_state, action) => {
       return {
         ...state,
         filterData: filter,
-      };
-
-    case FIND:
-      //debugger;
-      const findState = [...state.userData];
-      const findPayload = action.payload;
-      let element = null;
-      for (let i = 0; i < findState.length; i++) {
-        let a = findState[i];
-        if(a.id === parseInt(findPayload)){
-          element = a;
-          break;
-        }
-      }
-      return {
-        ...state,
-        findData: element,
       };
 
     default:

@@ -1,27 +1,28 @@
 import { Modal } from "antd";
-import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React from "react";
+import { useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { setFindInfo } from "../redux/useraction";
+
 
 function Modals() {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const location = useLocation();
-  console.log(location)
+  console.log(location);
   const { id } = useParams();
   console.log(id);
 
-  const data = useSelector((state) => state.user.findData);
-  console.log("data: ", data);
+  const allData = useSelector((state) => state.user.userData);
+  console.log(allData);
 
-  useEffect(() => {
-    isData();
-  });
-
-  const isData = () => {
-    dispatch(setFindInfo(id));
-  };
+  const temp = allData;
+  let element = null;
+  for (let i = 0; i < temp.length; i++) {
+    let a = temp[i];
+    if (a.id === parseInt(id)) {
+      element = a;
+      break;
+    }
+  }
 
   return (
     <div>
@@ -32,9 +33,9 @@ function Modals() {
         onCancel={() => navigate("/home")}
       >
         <h4>User Information</h4>
-        <h4>ID: {data.id}</h4>
-        <h4>Username: {data.username}</h4>
-        <h4>Password: {data.password}</h4>
+        <h4>ID: {element.id}</h4>
+        <h4>Username: {element.username}</h4>
+        <h4>Password: {element.password}</h4>
       </Modal>
     </div>
   );

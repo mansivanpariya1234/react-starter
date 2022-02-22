@@ -45,22 +45,6 @@ function SignIn() {
     }
   };
 
-  // const SignIn =  () => {
-  //   if (data.username && data.password) {
-  //     axios({
-  //       method: "post",
-  //       url: "http://localhost:5000/api/posts/check",
-  //       data: data,
-  //     })
-  //       .then((result) => {
-  //         localStorage.setItem("login", "true");
-  //         navigate("/home");
-  //         console.log("login Successful");
-  //       })
-  //       .catch((err) => alert("Username or Password Incorrect"));
-  //   }
-  // };
-
   return (
     <Form form={form} layout="horizontal">
       <Form.Item
@@ -106,15 +90,6 @@ function SignIn() {
           SignIn
         </Button>
       </Form.Item>
-
-      {/* <Form.Item shouldUpdate>
-      {()=>(
-        <Button type="primary" shape="round" htmlType="submit" disabled={
-          !form.isFieldsTouched(true) ||
-          !!form.getFieldsError().filter(({ errors }) => errors.length).length
-        } onClick={() => SignIn()}> SignIn </Button>
-      )}
-      </Form.Item> */}
     </Form>
   );
 }

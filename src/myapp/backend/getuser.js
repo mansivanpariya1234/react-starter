@@ -1,4 +1,3 @@
-
 var express = require("express");
 var router = express.Router();
 var db = require("./db_conn");
@@ -37,7 +36,6 @@ router.post("/save", function (req, res) {
         res.send(result)
     })
     .catch((err)=> console.log(err));
-    //res.json({ title: "1 row inserted", message: "data saved successfully" });
 });
 
 //----------delete data----------

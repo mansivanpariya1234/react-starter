@@ -9,7 +9,6 @@ import SignIn from "./sign";
 function SignRoute() {
   const navigate = useNavigate();
   const location = useLocation();
-  //console.log(location)
 
   const Clicked = () => {
     navigate("/signin");
