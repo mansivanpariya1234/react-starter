@@ -3,7 +3,6 @@ import {
   DELETE,
   EDIT,
   FILTER,
-  FIND,
   SAVE,
   SEARCH,
   SIGN_IN,
@@ -70,13 +69,6 @@ export const setSearchInfo = (state) => {
 export const setFilterInfo = (state) => {
   return {
     type: FILTER,
-    payload: state,
-  };
-};
-
-export const setFindInfo = (state) => {
-  return {
-    type: FIND,
     payload: state,
   };
 };
