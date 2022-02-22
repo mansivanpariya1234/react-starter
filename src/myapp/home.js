@@ -53,7 +53,6 @@ function Home() {
     try {
       const fetchData = await axios.get("http://localhost:5000/api/posts");
       dispatch(setSignInUser(fetchData.data));
-      //console.log("jsonData", fetchData.data);
     } catch (error) {
       console.log("fetchData error", error);
     }
