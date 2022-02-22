@@ -292,33 +292,3 @@ function Home() {
 }
 export default Home;
 
-// {/* <div>
-//   <table>
-//     <thead>
-//       <th>id</th>&nbsp;
-//       <th>Name</th>&nbsp;
-//       <th>Password</th>&nbsp;
-//       <th>Action</th>
-//     </thead>
-
-//     <tbody>
-//       {allData.map((x, index) => (
-//         <tr key={index}>
-//           <td>{x.id}</td>&nbsp;
-//           <td>{x.username}</td>&nbsp;
-//           <td>{x.password}</td>&nbsp;
-//           <td>
-//             <button id={`delete ${x.id}`} onClick={() => onDelete(x.id)}>
-//               delete
-//             </button>
-//           </td>
-//           <td>
-//             <button id={`edit ${x.id}`} onClick={() => onEdit(x.id)}>
-//               edit
-//             </button>
-//           </td>
-//         </tr>
-//       ))}
-//     </tbody>
-//   </table>
-// </div>; */}
