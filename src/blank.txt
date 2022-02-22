@@ -1,0 +1,107 @@
+import React, { useState } from "react";
+  import { Navigate, useLocation } from "react-router-dom";
+    
+  function LoginPage() {
+    const [isAuth, setIsAuth] = useState(false)
+    const { state } =useLocation();
+
+    const login =()=>{
+        setIsAuth(true)
+        if(isAuth === true){
+            return <Navigate to = {state?.from || "/"}/>
+        }
+    }
+  //   const login=()=>{
+  //       setIsAuth(true)
+  //   }
+    console.log(isAuth)
+
+    return (
+      <div>
+          <h4>LoginPage</h4>
+        <button onClick={login}>Login</button>
+      </div>
+    );
+  }
+
+ export default LoginPage;
+//============================
+ {/* <Link to="/">Public</Link>
+      <br />
+      <Link to="/protected">Protected</Link>
+      <br /> */}
+
+  {/* <Route path="/login" element={<LoginPage />} /> */}
+          {/* <Route
+            path="/protected/*"
+            element={ 
+              <PrivateRoute>
+                <Protected />
+              </PrivateRoute>
+            }
+          /> */}
+
+//============================
+
+ <Route path="/about/*" element={<Protected path="/about" element={<About/>} auth={true}/>}/>
+ 
+//===========================
+
+import React, {Component} from 'react';
+import { Switch, Route, Redirect } from 'react-router-dom';
+import Public from './components/Public';
+import Protected from './components/Protected';
+const Router = (props) => (
+<Switch>
+<Route exact path='/public' component={Public}/>
+<Route path="/protected" component={Protected} />
+</Switch>
+)
+export default Router;
+--------------
+
+import React from 'react';
+import { Link } from 'react-router-dom';
+class Header extends React.Component{
+constructor(props){
+super(props);
+this.login=this.login.bind(this);
+this.logout=this.logout.bind(this);
+}
+login(){
+}
+logout(){
+}
+render(){
+return(
+<div>
+<Link to='/'>Home</Link><br/>
+<Link to='Public'>Public</Link><br/>
+<Link to='protected'>Protected</Link><br/>
+<button onClick={this.login}>Login</button><br/>
+<button onClick={this.logout}>Logout</button>
+</div>
+);
+}
+}
+export default Header;
+--------------
+
+import React, { Component } from 'react';
+import './App.css';
+import  Header from './components/Header';
+import Router from './Router';
+class App extends Component {
+render() {
+return (
+<div className="App">
+<Header/>
+<Router/>
+</div>
+);
+}
+}
+export default App;
+------------
+
+search: `${createSearchParams(user)}`

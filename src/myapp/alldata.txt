@@ -1,0 +1,1032 @@
+//-----------------------------signroute.js----------------------------//
+    import React from "react";
+    import { Routes, Route, useNavigate, Link } from "react-router-dom";
+    import Home from "./home";
+    import Protected from "./protected";
+    import SignIn from "./sign";
+
+    function SignRoute() {
+    const navigate = useNavigate();
+    return (
+        <div>
+        <button onClick={() => navigate("/signin")}>SignIn</button> <br /><br/>
+
+        <Link to="/home">Home</Link>
+        <Routes>
+            <Route path="signin" element={<SignIn />} />
+        </Routes>
+        <Protected path="/home">
+            <Home/>
+        </Protected>
+        </div>
+    );
+    }
+    export default SignRoute;
+
+//-----------------------------sign.js----------------------------//
+
+    import axios from "axios";
+    import React, { useState, useEffect } from "react";
+    import { useNavigate } from "react-router-dom";
+
+    const url = "http://localhost:5000/api/posts";
+
+    function SignIn() {
+    const [data, setData] = useState({});
+    //---------url fetch data-----------
+    const [user, setUser] = useState([{}]);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        fetchData();
+    },[]);
+
+    //-------fetch data from database using url------
+    const fetchData = () => {
+        fetch(url)
+        .then((res) => res.json())
+        .then((result) => {
+            setUser(result);
+        
+        })
+        .catch((err) => alert(err));
+    };
+
+    const Login = () => {
+        if (data.username && data.password) {
+        axios({
+            method: "post",
+            url: "http://localhost:5000/api/posts/check",
+            data: data,
+        })
+            .then((result) => {
+            fetchData();
+            localStorage.setItem("login", "true");
+            navigate("/home");
+            console.log("login Successful")
+            })
+            .catch((err) => alert(`${err} Invalid Data`));
+        }
+
+    };
+
+    return (
+        <div>
+        <label>UserName:</label>
+        <input
+            type="text"
+            placeholder="Enter Your Name"
+            value={data.username}
+            onChange={(e) => setData({ ...data, username: e.target.value })}
+        />
+        <br />
+        <br />
+
+        <label>Password:</label>
+        <input
+            type="password"
+            placeholder="Enter Your Password"
+            value={data.password}
+            onChange={(e) => setData({ ...data, password: e.target.value })}
+        />
+        <br />
+        <br />
+        <button onClick={Login}>Signin</button>
+        </div>
+    );
+    }
+
+    export default SignIn;
+
+//-----------------------------protected.js----------------------------//
+
+    import React from "react";
+    import { Navigate, Route, Routes } from "react-router-dom";
+
+    const Protected = ({children, ...rest }) => {
+    return (
+        <Routes>
+        <Route
+            {...rest}
+            element={
+            localStorage.getItem('login') ? (
+                children
+            ) : (
+                <Navigate to={{ pathname: "/signin" }} />
+            )
+            }
+        />
+        </Routes>
+    );
+    };
+    export default Protected;
+
+//-----------------------------home.js----------------------------//
+
+    import axios from "axios";
+    import React, { useEffect, useState } from "react";
+    import { useDispatch, useSelector } from "react-redux";
+    import { useNavigate } from "react-router-dom";
+    import { setUserInfo } from "../redux/useraction";
+
+    function Home() {
+    const data = "http://localhost:5000/api/posts";
+    //-----display data---
+    const [person, setPerson] = useState([{}]);
+    //------edit data-------
+    const [user, setUser] = useState({});
+    const navigate = useNavigate();
+
+    const dispatch = useDispatch()
+    const showList = useSelector((state)=>state.user.userData.info)
+    console.log("showlist:" , showList)
+
+    useEffect(() => {
+        fetchPerson();
+    }, []);
+
+    const fetchPerson = () => {
+        fetch(data)
+        .then((res) => res.json())
+        .then((result) => {
+            setPerson(result);
+            dispatch(setUserInfo(result))
+        });
+    };
+
+    const Logout = () => {
+        navigate("/signin");
+        localStorage.removeItem("login");
+    };
+
+    const onDelete = (id) => {
+        axios
+        .delete("http://localhost:5000/api/posts/delete/" + id)
+        .then((result) => {
+            fetchPerson();
+            alert("Delete Data Successfully");
+        })
+        .catch((err) => alert(err));
+    };
+
+    //--------fetch update data------
+    const onEdit = (id) => {
+        //debugger;
+    //setShowForm(showForm)
+        const _person = [...person];
+        let arr = null;
+        for (let i = 0; i < _person.length; i++) {
+        const element = _person[i];
+        if (element.id === id) {
+            arr = element;
+        }
+        setUser(arr);
+        }
+        console.log(person)
+    };
+
+    //-----save update data--------
+    const onSubmit = (e, id) => {
+        // debugger;
+        e.preventDefault();
+        axios({
+            method: "put",
+            url: "http://localhost:5000/api/posts/update/" + id,
+            data: user,
+        })
+            .then((result) => {
+            fetchPerson();  
+            alert(" Update Data successfully");
+            })
+            .catch((err) => alert(err));
+    };
+    
+
+    return (
+        <div className="table">
+        <h5>Login successfully</h5>
+        <h4>Welcome To Home Page...</h4>
+        <button onClick={Logout}>Logout</button>
+        <br />
+        <br />
+
+        {/* -----edit form------ */}
+        <div>
+            <form>
+            <input
+                type="text"
+                placeholder="update username"
+                value={user.username}
+                onChange={(e) =>
+                setUser((prev) => ({ ...prev, username: e.target.value }))
+                }
+            />
+            &nbsp;
+            <input
+                type="text"
+                placeholder="update password"
+                value={user.password}
+                onChange={(e) =>
+                setUser((prev) => ({ ...prev, password: e.target.value }))
+                }
+            />
+            &nbsp;
+            <button className="save" onClick={(e) => onSubmit(e, user.id)}>
+                Update
+            </button>
+            </form>
+        </div>
+
+        {/* ------------table------------ */}
+        <div>
+            <table>
+            <thead>
+                <th>id</th>&nbsp;
+                <th>Name</th>&nbsp;
+                <th>Password</th>&nbsp;
+                <th>Action</th>
+            </thead>
+
+            <tbody>
+                {person.map((x) => (
+                <tr>
+                    <td>{x.id}</td>&nbsp;
+                    <td>{x.username}</td>&nbsp;
+                    <td>{x.password}</td>&nbsp;
+                    <td>
+                    <button id={`delete ${x.id}`} onClick={() => onDelete(x.id)}>
+                        delete
+                    </button>
+                    </td>
+                    <td>
+                    <button id={`edit ${x.id}`} onClick={()=>onEdit(x.id)}>
+                        edit
+                    </button>
+                    </td>
+                </tr>
+                ))}
+            </tbody>
+            </table>
+        </div>
+        </div>
+    );
+    }
+    export default Home;
+
+//-----------------------------db_conn.js----------------------------//
+
+    //--------include module------
+    var mysql = require("mysql");
+
+    //------create connection------
+    var conn = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "",
+    database: "app",
+    });
+
+    //------check connection-------
+    conn.connect(function (err) {
+    if (err) throw err;
+    console.log("db connected");
+    });
+
+    module.exports = conn;
+
+//-----------------------------db_route.js----------------------------//
+
+    // //------include all modules-------
+    var express = require("express");
+    var app = express();
+    var cors = require("cors");
+    app.use(cors());
+    var bodyParser = require("body-parser");
+    app.use(bodyParser.urlencoded({ extended: false }));
+    app.use(bodyParser.json());
+
+    //--------get all routes--------
+    var apiRoutes = express.Router();
+    var routePrefix = '/api';
+    var user = require("./getuser");
+
+    //------get data from db table-------
+    app.use('/api', apiRoutes);
+    app.use(routePrefix + '/posts', user);
+
+    //------localhost run on port 5000--------
+    app.listen(5000, function (err) {
+    if (err) throw err;
+    console.log("port run 5000");
+    });
+
+//-----------------------------getuser.js----------------------------//
+
+    var express = require("express");
+    var router = express.Router();
+    var db = require("./db_conn");
+
+    //-------check user-----
+    router.post("/check" ,function(req, res){
+    console.log("check :  ",req.body)
+
+    if(req.body.username && req.body.password !== null)
+    {
+    return runQuery("SELECT * FROM my_app WHERE username ='" + req.body.username + "' AND password='" + req.body.password + "'")
+        .then((result)=>{
+        result.length === 0 ? res.status(500).json({error: "no data found", data: req.body}) : res.send(result)
+        })
+        .catch((err) => {
+            return res.status(500).json({missing: "sql syntax error"})
+        });
+    }
+    res.status(500).json({error : "username and password required"})
+    })
+
+    //------get data-------
+    router.get("/", function (req, res) {
+
+    runQuery("SELECT * FROM  my_app") 
+        .then((result) => {
+        res.send(result)  
+        })
+        .catch((err) => console.log(err));
+    });
+
+    //------post data-------
+    router.post("/save", function (req, res) {
+        
+        runQuery("INSERT INTO my_app (username ,  password) VALUES ('" + req.body.username +  "' , '" +  req.body.password +  "')")
+        .then((result)=>{
+            res.send(result)
+        })
+        .catch((err)=> console.log(err));
+        //res.json({ title: "1 row inserted", message: "data saved successfully" });
+    });
+
+    //----------delete data----------
+    router.delete("/delete/:id", function (req, res) {
+
+        let id = req.params.id;
+        runQuery(`DELETE FROM my_app WHERE id = ${id}`)
+        .then((result)=>{
+            res.send(result)
+        })
+        .catch((err)=>console.log(err))
+    });
+
+    //----------update data--------
+    router.put("/update/:id", function (req, res) {
+        //console.log(req.body);
+        let id = req.body.id;
+        let username = req.body.username;
+        let password = req.body.password;
+    
+        runQuery(`UPDATE my_app SET username="${username}" , password="${password}" WHERE id= ${id}`)
+        .then((result)=>{
+            res.send(result)
+        })
+        .catch((err)=>console.log(err))
+    });
+
+    //-------promise-----------
+    var runQuery = (query) => {
+    return new Promise((resolve, reject) => {
+        try {
+        db.query(query, (err, results) => {
+            if (err) reject(err);
+            resolve(results);
+        });
+        } catch (error) {
+        reject(error);
+        }
+    });
+    };
+
+    module.exports = router;
+
+///////////////////////-----------new------------------//////////////////////
+
+------------------------------------getuser.js------------------------------
+
+    var express = require("express");
+    var router = express.Router();
+    var db = require("./db_conn");
+
+    //-------check user-----
+    router.post("/check" ,function(req, res){
+    console.log("check :  ",req.body)
+
+    if(req.body.username && req.body.password !== null)
+    {
+    return runQuery("SELECT * FROM my_app WHERE username ='" + req.body.username + "' AND password='" + req.body.password + "'")
+        .then((result)=>{
+        result.length === 0 ? res.status(500).json({error: "no data found", data: req.body}) : res.send(result)
+        })
+        .catch((err) => {
+            return res.status(500).json({missing: "sql syntax error"})
+        });
+    }
+    res.status(500).json({error : "username and password required"})
+    })
+
+    //------get all data-------
+    router.get("/", function (req, res) {
+    runQuery("SELECT * FROM  my_app order by id desc") 
+        .then((result) => {
+        res.send(result)  
+        })
+        .catch((err) => console.log(err));
+    });
+
+    //------post data-------
+    router.post("/save", function (req, res) {
+    let insert = req.body;
+        console.log(insert)
+        runQuery("INSERT INTO my_app (username , password) VALUES ('" + req.body.username +  "' , '" +  req.body.password +  "')")
+        .then((result)=>{
+            res.send(result)
+        })
+        .catch((err)=> console.log(err));
+        //res.json({ title: "1 row inserted", message: "data saved successfully" });
+    });
+
+    //----------delete data----------
+    router.delete("/delete/:id", function (req, res) {
+
+        let id = req.params.id;
+        runQuery(`DELETE FROM my_app WHERE id = ${id}`)
+        .then((result)=>{
+            res.send(result)
+        })
+        .catch((err)=>console.log(err))
+    });
+
+    //----------update data--------
+    router.put("/update/:id", function (req, res) {
+        //console.log(req.body);
+        let id = req.body.id;
+        let username = req.body.username;
+        let password = req.body.password;
+    
+        runQuery(`UPDATE my_app SET username="${username}" , password="${password}" WHERE id= ${id}`)
+        .then((result)=>{
+            res.send(result)
+        })
+        .catch((err)=>console.log(err))
+    });
+
+    //-------promise-----------
+    var runQuery = (query) => {
+    return new Promise((resolve, reject) => {
+        try {
+        db.query(query, (err, results) => {
+            if (err) reject(err);
+            resolve(results);
+        });
+        } catch (error) {
+        reject(error);
+        }
+    });
+    };
+
+    module.exports = router;
+
+------------------------db_route.js----------------------
+    // //------include all modules-------
+    var express = require("express");
+    var app = express();
+    var cors = require("cors");
+    app.use(cors());
+    var bodyParser = require("body-parser");
+    app.use(bodyParser.urlencoded({ extended: false }));
+    app.use(bodyParser.json());
+
+    //--------get all routes--------
+    var apiRoutes = express.Router();
+    var routePrefix = '/api';
+    var user = require("./getuser");
+
+    //------get data from db table-------
+    app.use('/api', apiRoutes);
+    app.use(routePrefix + '/posts', user);
+
+    //------localhost run on port 5000--------
+    app.listen(5000, function (err) {
+    if (err) throw err;
+    console.log("port run 5000");
+    });
+
+--------------------------db_conn.js-------------------
+
+    //--------include module------
+    var mysql = require("mysql");
+
+    //------create connection------
+    var conn = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "",
+    database: "app",
+    });
+
+    //------check connection-------
+    conn.connect(function (err) {
+    if (err) throw err;
+    console.log("db connected");
+    });
+
+    module.exports = conn;
+
+--------------------------signroute.js-------------------
+    import { Button } from "antd";
+    import React from "react";
+    import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
+    import Home from "./home";
+    import Protected from "./protected";
+    import SignIn from "./sign";
+
+    function SignRoute() {
+    const navigate = useNavigate();
+    const location = useLocation();
+    //console.log(location)
+    
+    const Clicked = () => {
+        navigate("/signin");
+    };
+
+    const isLogin = () => {
+        return location.pathname === "/";
+    }
+
+    return (
+        <div>
+        {isLogin() && <Button type="primary" onClick={Clicked}>Login</Button>}
+        {/* <Link to="/home">Home</Link> */}
+        <Routes>
+            <Route path="signin" element={<SignIn />} />
+        </Routes>
+        <Protected path="/home">
+            <Home />
+        </Protected>
+        </div>
+    );
+    }
+    export default SignRoute;
+
+--------------------------sign.js------------------------
+    import { Button, Form, Input } from "antd";
+    import { UserOutlined, LockOutlined } from "@ant-design/icons";
+    import axios from "axios";
+    import React, { useEffect, useState } from "react";
+    import { useNavigate } from "react-router-dom";
+    import "antd/dist/antd.css";
+
+    //const url = "http://localhost:5000/api/posts";
+
+    function SignIn() {
+    const [form] = Form.useForm();
+    const [data, setData] = useState({ username: "", password: "" });
+    const [show, setShow] = useState(true);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (data.username && data.password) {
+        setShow(false);
+        } else setShow(true);
+    }, [data]);
+
+    const onChangeHandler = (e) => {
+        const value = e.target.value;
+        setData({
+        ...data,
+        [e.target.name]: value,
+        });
+    };
+    //console.log(data);
+
+    const SignIn = () => {
+        if (data.username && data.password) {
+        axios({
+            method: "post",
+            url: "http://localhost:5000/api/posts/check",
+            data: data,
+        })
+            .then((result) => {
+            localStorage.setItem("login", "true");
+            navigate("/home");
+            console.log("login Successful");
+            })
+            .catch((err) => alert("Username or Password Incorrect"));
+        }
+    };
+
+    return (
+        <Form form={form} layout="horizontal">
+        <Form.Item
+            label="Username"
+            name="username"
+            labelCol={{ span: 10 }}
+            wrapperCol={{ span: 5 }}
+            rules={[{ required: true, message: "Please input your username!" }]}
+            onChange={(e) => onChangeHandler(e)}
+        >
+            <Input
+            name="username"
+            placeholder="Enter Username"
+            type="text"
+            prefix={<UserOutlined />}
+            />
+        </Form.Item>
+
+        <Form.Item
+            label="Password"
+            name="password"
+            labelCol={{ span: 10 }}
+            wrapperCol={{ span: 5 }}
+            rules={[{ required: true, message: "Please input your Password!" }]}
+            onChange={(e) => onChangeHandler(e)}
+        >
+            <Input.Password
+            name="password"
+            placeholder="Enter Password"
+            type="password"
+            prefix={<LockOutlined />}
+            />
+        </Form.Item>
+
+        <Form.Item>
+            <Button
+            type="primary"
+            shape="round"
+            htmlType="submit"
+            disabled={show}
+            onClick={() => SignIn()}
+            >
+            SignIn
+            </Button>
+        </Form.Item>
+
+        {/* <Form.Item shouldUpdate>
+        {()=>(
+            <Button type="primary" shape="round" htmlType="submit" disabled={
+            !form.isFieldsTouched(true) ||
+            !!form.getFieldsError().filter(({ errors }) => errors.length).length
+            } onClick={() => SignIn()}> SignIn </Button>
+        )}
+        </Form.Item> */}
+        </Form>
+    );
+    }
+
+    export default SignIn;
+
+--------------------------home.js-------------------------
+
+    import { Table, Space, Button, notification, Modal } from "antd";
+    import Column from "antd/lib/table/Column";
+    import Search from "antd/lib/transfer/search";
+    import axios from "axios";
+    import React, { useEffect, useState } from "react";
+    import { useDispatch, useSelector } from "react-redux";
+    import { useNavigate } from "react-router-dom";
+    import {
+    setDeleteInfo,
+    setEditInfo,
+    setFilterInfo,
+    setSaveInfo,
+    setSearchInfo,
+    setSignInUser,
+    setUpdateInfo,
+    } from "../redux/useraction";
+
+    function Home() {
+    const data = "http://localhost:5000/api/posts";
+    //------new user-------
+    const [newUser, setNewUser] = useState({ username: "", password: "" });
+    //------edit data-------
+    const [temp, setTemp] = useState({});
+    //------search data-----
+    const [search, setSearch] = useState("");
+    //------toggle update add------
+    const [show, setShow] = useState(true);
+    //-------modal visible--------
+    const [ModalVisible, setModalVisible] = useState(false);
+    //---------modal data----------
+    const [modalData, setModalData] = useState({});
+
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const showList = useSelector((state) => state.user.userData);
+    const edit = useSelector((state) => state.user.editData);
+    const searchData = useSelector((state) => state.user.searchData);
+    const allData = useSelector((state) => state.user.filterData);
+
+    console.log("redux:", showList);
+    //console.log(temp);
+    //console.log(newUser);
+
+    const newArr = allData.map((arr) => {
+        return { key: arr.id, ...arr };
+    });
+
+    const newArr1 = newArr.map((arr1) => {
+        return { ...arr1, name: arr1.username + arr1.password };
+    });
+    console.log("newArr1:", newArr1);
+
+    useEffect(() => {
+        fetchPerson();
+    }, []);
+
+    const fetchPerson = async () => {
+        //debugger;
+        try {
+        const fetchData = await axios.get("http://localhost:5000/api/posts");
+        dispatch(setSignInUser(fetchData.data));
+        //console.log("jsonData", fetchData.data);
+        } catch (error) {
+        console.log("fetchData error", error);
+        }
+    };
+
+    useEffect(() => {
+        fetchEditUSer();
+    }, [edit]);
+
+    const fetchEditUSer = () => {
+        if (edit !== null) {
+        setTemp({
+            id: edit.id,
+            username: edit.username,
+            password: edit.password,
+        });
+        }
+    };
+
+    const Logout = () => {
+        navigate("/");
+        localStorage.removeItem("login");
+    };
+
+    //----------add user--------
+    const onAdd = async (e, newUser) => {
+        e.preventDefault();
+        const person = {
+        id: new Date().getTime(),
+        username: newUser.username,
+        password: newUser.password,
+        };
+        try {
+        await axios({
+            method: "post",
+            url: "http://localhost:5000/api/posts/save",
+            data: person,
+        });
+        dispatch(setSaveInfo(person));
+        notification.open({ message: "Add New Data Successfully" });
+        } catch (error) {
+        console.log("add new data error");
+        }
+    };
+
+    //----------delete user----------
+    const onDelete = async (id) => {
+        //debugger;
+        try {
+        let deleteData = await axios.delete(
+            "http://localhost:5000/api/posts/delete/" + id
+        );
+
+        dispatch(setDeleteInfo(id));
+        notification.open({ message: "Delete Data Successfully" });
+        console.log(deleteData);
+        } catch (error) {
+        console.log("delete Data error");
+        }
+    };
+
+    //--------fetch update data------
+    const onEdit = (id) => {
+        setShow(false);
+        dispatch(setEditInfo(id));
+    };
+
+    //-----save update data--------
+    const onUpdate = async (e, id) => {
+        //debugger;
+        e.preventDefault();
+        setShow(true);
+        try {
+        await axios({
+            method: "put",
+            url: "http://localhost:5000/api/posts/update/" + id,
+            data: temp,
+        });
+        dispatch(setUpdateInfo(temp));
+        notification.open({ message: "Update Data Successfully" });
+        } catch (error) {
+        console.log("update data error");
+        }
+        setTemp({ username: "", password: "" });
+    };
+
+    //------search data----------
+    const handleSearchChange = (e) => {
+        dispatch(setSearchInfo(e.target.value));
+    };
+
+    useEffect(() => {
+        setSearch(searchData);
+    }, [searchData]);
+
+    useEffect(() => {
+        dispatch(setFilterInfo(search));
+    }, [search]);
+
+    const showModal = (record) => {
+        setModalVisible(true);
+        setModalData(record);
+    };
+
+    return (
+        <div className="table">
+        <Button type="primary" onClick={Logout}>
+            Logout
+        </Button>
+        <br />
+        <br />
+        <h4>Welcome To Home Page...</h4>
+        <br />
+
+        {/* -----add new----- */}
+        {show ? (
+            <div>
+            <form>
+                <input
+                type="text"
+                placeholder="enter username"
+                value={newUser.username}
+                onChange={(e) =>
+                    setNewUser({ ...newUser, username: e.target.value })
+                }
+                />
+                &nbsp;
+                <input
+                type="text"
+                placeholder="enter password"
+                value={newUser.password}
+                onChange={(e) =>
+                    setNewUser({ ...newUser, password: e.target.value })
+                }
+                />
+                &nbsp;
+                <button
+                id={`add${newUser.id}`}
+                className="adduser"
+                onClick={(e) => onAdd(e, newUser)}
+                >
+                Add
+                </button>
+            </form>
+            </div>
+        ) : (
+            <div>
+            <form>
+                <input
+                type="text"
+                placeholder="update username"
+                value={temp.username}
+                onChange={(e) => setTemp({ ...temp, username: e.target.value })}
+                />
+                &nbsp;
+                <input
+                type="text"
+                placeholder="update password"
+                value={temp.password}
+                onChange={(e) => setTemp({ ...temp, password: e.target.value })}
+                />
+                &nbsp;
+                <button
+                id={`update ${temp.id}`}
+                className="save"
+                onClick={(e) => onUpdate(e, temp.id)}
+                >
+                Update
+                </button>
+            </form>
+            </div>
+        )}
+
+        {/* -----search input-------- */}
+        <br />
+        <div>
+            <Space>
+            <Search
+                placeholder="Search Data"
+                onChange={handleSearchChange}
+                value={search}
+            />
+            </Space>
+            <br />
+            <br />
+
+            <div>Total {allData.length} Data Filter</div>
+
+            {/* ----------modal------------ */}
+
+            <Modal
+            title="User Information"
+            visible={ModalVisible}
+            onOk={() => setModalVisible(false)}
+            onCancel={() => setModalVisible(false)}
+            >
+            <h4>Id: {modalData.id}</h4>
+            <h4>Key: {modalData.key}</h4>
+            <h4>Username: {modalData.username}</h4>
+            <h4>Password: {modalData.password}</h4>
+            <h4>Name: {modalData.name}</h4>
+            </Modal>
+
+            {/* <Button onClick={showModal}>open</Button> */}
+
+            {/* ------------table------------ */}
+            <Table
+            dataSource={newArr1}
+            bordered
+            size="small"
+            onRow={(record) => ({
+                onClick: () => showModal(record),
+            })}
+            >
+            <Column title="Id" dataIndex="id" />
+            <Column title="Username" dataIndex="username" />
+            <Column
+                title="Password"
+                dataIndex="password"
+                onCell={(record, index) => {
+                return {
+                    style: { background: record.password === "kk" && "red"  },
+                };
+                }}
+            />
+            <Column title="Name" dataIndex="name" />
+            <Column
+                title="Action"
+                render={(showList) => (
+                <Space size="middle">
+                    <Button
+                    size="small"
+                    type="submit"
+                    danger
+                    onClick={() => onDelete(showList.id)}
+                    >
+                    Delete
+                    </Button>
+                    <Button
+                    size="small"
+                    style={{ borderColor: "blue", color: "blue" }}
+                    onClick={() => onEdit(showList.id)}
+                    >
+                    Edit
+                    </Button>
+                </Space>
+                )}
+            />
+            </Table>
+        </div>
+        </div>
+    );
+    }
+    export default Home;
+
+    // {/* <div>
+    //   <table>
+    //     <thead>
+    //       <th>id</th>&nbsp;
+    //       <th>Name</th>&nbsp;
+    //       <th>Password</th>&nbsp;
+    //       <th>Action</th>
+    //     </thead>
+
+    //     <tbody>
+    //       {allData.map((x, index) => (
+    //         <tr key={index}>
+    //           <td>{x.id}</td>&nbsp;
+    //           <td>{x.username}</td>&nbsp;
+    //           <td>{x.password}</td>&nbsp;
+    //           <td>
+    //             <button id={`delete ${x.id}`} onClick={() => onDelete(x.id)}>
+    //               delete
+    //             </button>
+    //           </td>
+    //           <td>
+    //             <button id={`edit ${x.id}`} onClick={() => onEdit(x.id)}>
+    //               edit
+    //             </button>
+    //           </td>
+    //         </tr>
+    //       ))}
+    //     </tbody>
+    //   </table>
+    // </div>; */}

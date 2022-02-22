@@ -1,0 +1,35 @@
+---------------What is Redux?------------------
+Redux is a library for managing and updating application state, using events called "actions".
+
+-------------why Should I Use Redux?-----------
+-manage state-
+-Redux helps you manage "global" state - state that is needed across many parts of your application.
+
+-------------When Should I Use Redux?----------
+-large application-
+You have large amounts of application state that are needed in many places in the app
+
+-----------what problem does it solved---------
+
+-performance optimizations-
+-React is generally fast, but by default any updates to a component will cause React to re-render all of the components inside that part of the component tree. 
+-the best way to improve performance is to skip unnecessary re-renders, so that components only re-render when their data has actually changed.
+-React Redux implements performance optimizations internally, so that your own component only re-renders when it actually needs to.
+
+------------------------------------------------
+
+-Redux is a library for managing global application state
+
+-----Redux uses a "one-way data flow" app structure
+
+--When something happens in the app:
+The UI dispatches an action
+The store runs the reducers, and the state is updated based on what occurred
+The store notifies the UI that the state has changed
+-The UI re-renders based on the new state
+
+-------Redux uses several types of code
+-State describes the condition of the app at a point in time, and UI renders based on that state
+-Actions are plain objects with a type field, and describe "what happened" in the app
+-Reducers are functions that calculate a new state value based on previous state + an action
+-A Redux store runs the root reducer whenever an action is dispatched

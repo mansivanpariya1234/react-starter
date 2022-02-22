@@ -1,0 +1,293 @@
+//---------------------component1.js--------------------//
+    import React, { useState } from "react";
+    import { useDispatch } from "react-redux";
+    import { setClearInfo, setUserInfo } from "../redux/useraction";
+    import Component2 from "./component2";
+
+    function Component1() {
+    const [data, setData] = useState("");
+
+    const dispatch = useDispatch();
+
+    const Submit = () => {
+        dispatch(setUserInfo(data));
+    };
+
+    const Clear = () => {
+        dispatch(setClearInfo(data));
+    };
+
+    return (
+        <div>
+        <input
+            type="text"
+            placeholder="Enter Data"
+            value={data}
+            onChange={(e) => setData(e.target.value)}
+        />
+        <button onClick={Submit}>Submit</button>
+        <button onClick={Clear}>Clear</button>
+        <Component2 />
+        </div>
+    );
+    }
+    export default Component1;
+
+//---------------------component2.js--------------------//
+    import React from "react";
+    import { useDispatch, useSelector } from "react-redux";
+    import { setDeleteInfo } from "../redux/useraction";
+
+    function Component2() {
+    const show = useSelector((state) => state.user.userData);
+    const dispatch = useDispatch();
+    console.log("redux:", show);
+
+    const onDelete = (index) => {
+        dispatch(setDeleteInfo(index));
+    };
+
+    return (
+        <div>
+        Redux Data:
+        <div>
+            {show.map((a,index) => (
+            <div key={index}>
+                {a} <button onClick={()=>onDelete(index)}>delete</button>
+            </div>
+            ))}
+        </div>
+        </div>
+    );
+    }
+    export default Component2;
+https://brianmin.com/react-edit-text/
+//---------//
+    import React, { useState } from "react";
+    import { useDispatch, useSelector } from "react-redux";
+    import { setDeleteInfo, setEditInfo, setUpdateInfo } from "../redux/useraction";
+
+    function Component2() {
+    const [user,setUser] = useState("")
+    const [temp, setTemp] = useState({})
+
+    const show = useSelector((state) => state.user.userData);
+    const edit = useSelector((state)=> state.user.editData);
+    const dispatch = useDispatch();
+    console.log("show:", show);
+    console.log("edit", edit)
+
+    const onDelete = (id) => {
+        dispatch(setDeleteInfo(id));
+    };
+    
+    // const _show = [...show]
+    // let arr = null;
+    // let index=0;
+    // for(let i=0; i<_show.length; i++){
+    //   let a = _show[i];
+    //   if(a.id === id){
+    //     index = i
+    //     arr = a;
+    //   }
+    //   setUser(index)
+    // }
+    // setTemp(arr)
+
+    const onEdit = (id,index) => {
+        setUser(index)
+        dispatch(setEditInfo(id))
+    };
+    console.log("===", temp)
+
+    const onUpdate = () =>{
+        setUser()
+        //dispatch(setUpdateInfo(temp))
+    }
+
+    return (
+        <div> 
+        user index: {user}
+            {show.map((a, index) => (
+            <div className="app" key={index}>
+
+            {user === index ? <input type="text" value={edit.username} onChange={(e) => e.target.value}/> : <>{a.username}</>} &nbsp;
+
+                <button onClick={() => onDelete(a.id)}>Delete</button>&nbsp;
+
+            {user === index ? <button onClick={() => onUpdate()}>Update</button> : <button onClick={() => onEdit(a.id,index)}>Edit</button>} 
+            </div>
+            ))}
+        </div>
+    );
+    }
+    export default Component2;
+
+
+/////////////////////--redux--/////////////////////////
+
+//------------store.js---------------
+
+    import { createStore } from "redux";
+    import rootReducer from "./rootreducer";
+
+    const store = createStore(
+    rootReducer
+    );
+    export default store;
+
+//--------------rootreducer.js--------
+
+     import { combineReducers } from "redux";
+    import reducer from "./userreducer";
+
+    const rootReducer = combineReducers(
+    {
+        user: reducer,
+    }
+    );
+
+    export default rootReducer;
+
+//------------userreducerjs---------
+
+    import { SIGN_IN, CLEAR, SUBMIT, DELETE, UPDATE, EDIT } from "./actiontype";
+
+    const initial_state = {
+    userData: [],
+    editData:{}
+    };
+
+    const reducer = (state = initial_state, action) => {
+    //debugger;
+    console.log(state, "=", action);
+    switch (action.type) {
+        case SIGN_IN:
+        return {
+            ...state,
+            userData: action.payload,
+        };
+
+        case SUBMIT:
+        return {
+            ...state,
+            userData: [...state.userData, action.payload],
+        };
+
+        case CLEAR:
+        return {
+            userData: [],
+        };
+
+        case DELETE:
+        //debugger;
+        const a = [...state.userData];
+        const b = action.payload;
+        let index = 0;
+        for (let i = 0; i < a.length; i++) {
+            const x = a[i];
+            if (x.id === b) {
+            index = i;
+            break;
+            }
+        }
+        a.splice(index, 1);
+        return {
+            ...state,
+            userData: a,
+        };
+
+        case EDIT:
+        //debugger;
+        const _data = [...state.userData];
+        const _payload = action.payload;
+        let arr = null;
+        for (let i = 0; i < _data.length; i++) {
+            let a = _data[i];
+            if (a.id === _payload) {
+            arr = a;
+            }
+        }
+
+        return {
+            ...state,
+            editData : arr,
+        };
+
+        case UPDATE:
+        // debugger;
+        let x = [...state.userData];
+        let y = action.payload;
+        var _index = 0;
+        for (let j = 0; j < x.length; j++) {
+            let temp = x[j];
+            if (temp.id === y.id) {
+            _index = j;
+            }
+        }
+        x[_index] = y;
+
+        return {
+            ...state,
+            userData: x,
+        };
+        default:
+        return state;
+    }
+    };
+
+    export default reducer;
+
+//-------------useractionjs-----------
+    import { SIGN_IN, CLEAR, SUBMIT, DELETE, UPDATE, EDIT } from "./actiontype";
+
+    export const setSignInUser = (state) => {
+    return {
+        type: SIGN_IN,
+        payload: state,
+    };
+    };
+
+    export const setUserInfo = (state) => {
+    return {
+        type: SUBMIT,
+        payload: state,
+    };
+    };
+
+    export const setClearInfo = (state) => {
+    return {
+        type: CLEAR,
+        payload: state,
+    };
+    };
+
+    export const setDeleteInfo = (state) => {
+    return {
+        type: DELETE,
+        payload: state,
+    };
+    };
+
+    export const setEditInfo = (state) => {
+    return {
+        type: EDIT,
+        payload: state,
+    };
+    };
+
+    export const setUpdateInfo = (state) => {
+    return {
+        type: UPDATE,
+        payload: state,
+    };
+    };
+
+//-----------actiontype.js---------
+
+    export const SIGN_IN = "signin"
+    export const SUBMIT = "submit"
+    export const CLEAR = "clear"
+    export const DELETE = "delete"
+    export const EDIT = "edit"
+    export const UPDATE = "update"
