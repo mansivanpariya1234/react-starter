@@ -36,6 +36,16 @@ The store notifies the UI that the state has changed
 
 
 //////////---------git command-------------////////////
+--what is github?
+  GitHub is a code hosting platform for collaboration and version control.
+  GitHub lets you (and others) work together on projects.
+
+github features-
+1.easy project management
+2.improve code write
+3.secure
+4.
+
 1.you don't have any code
     1-git clone                                //copy master file
     2-git checkout -b branch-name              //create a new branch
