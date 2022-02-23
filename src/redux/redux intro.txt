@@ -47,9 +47,11 @@ The store notifies the UI that the state has changed
 
 2.if you are work all ready created branch
     1-git checkout branch-name                 //move to existing branch
-    2-git fetch --all                          //fetch all the files
+    2-git fetch --all                          //fetch all the branch
     3-git pull origin branch-name              //all the changes implements in current branch
     4-git status
     5-git add .
     6-git commit -m "some-message"
     7-git push origin branch-name
+
+    git branch --all                            //list of your local branch
