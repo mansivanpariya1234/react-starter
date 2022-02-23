@@ -55,3 +55,5 @@ The store notifies the UI that the state has changed
     7-git push origin branch-name
 
 git branch --all                                //list of your local branch
+
+3.if i have push any branch so this branch push on checkout branch not a main branch 
