@@ -33,3 +33,25 @@ The store notifies the UI that the state has changed
 -Actions are plain objects with a type field, and describe "what happened" in the app
 -Reducers are functions that calculate a new state value based on previous state + an action
 -A Redux store runs the root reducer whenever an action is dispatched
+
+
+//////////---------git command-------------////////////
+1.you don't have any code
+    1-git clone                                //copy master file
+    2-git checkout -b branch-name              //create a new branch
+    3-git status                               //check which file changed 
+    4-git add .                                //add file locally (here "." //means all files)
+    5-git add src/pages/home.js                //add particular file
+    6-git commit -m "message"                  //all changes commit
+    7-git push origin branch-name              //push commit files on github
+
+2.if you are work all ready created branch
+    1-git checkout branch-name                 //move to existing branch
+    2-git fetch --all                          //fetch all the branch
+    3-git pull origin branch-name              //all the changes implements in current branch
+    4-git status
+    5-git add .
+    6-git commit -m "some-message"
+    7-git push origin branch-name
+
+    git branch --all                            //list of your local branch
