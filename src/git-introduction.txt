@@ -27,10 +27,33 @@ github features-
     6-git commit -m "some-message"
     7-git push origin branch-name
 
+3.how to create child branch from sub branch
+    1-git checkout branch-name
+    2-git checkout -b (new branch name) (sub branch name)        //create a child branch from sub branch (ex. git checkout -b child-table parent-table)
+    3-git push origin new branch name                            //a new branch push remote server (github) (ex. git push origin child-table) 
+    
+    git flow = main
+                |
+            1.parent-table -> child-table
+            2.parent-notification
+
+    (here, we have "main branch" and main branch inside a two sub branch 1st "parent-table" and 2nd "parent-notification" and also 1st "parent-table" branch inside child branch "child-table")
+
+4.if some create a new branch and this new branch inside a new folder so how to get this new branch and new files
+    1-git checkout branch-name                 //move to another branch
+    2-git fetch --all                          //fetch all old and new branch
+    3-git pull origin branch name              //all the new changes and new files updated in your current active branch
+
+
 git branch --all                                //list of your local branch
 git init
 git remote -v                                   //check which origin connect
 git branch -D branch-name                       //delete local branch
 git push origin --delete branch-name            //delete remote branch (github)
+
+5.if i am on branch1 and some changes on this branch and then commit "1st change" and does not push the code 
+    and i move branch2 and commit and push the code and again move branch1 and again some changes then again commit "2nd change" and now i push branch1 code
+    so both commit push on remote server (github)
+
 
 3.if i have push any branch so this branch push on checkout branch not a main branch 
