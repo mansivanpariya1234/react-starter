@@ -52,7 +52,7 @@ git branch -D branch-name                       //delete local branch
 git push origin --delete branch-name            //delete remote branch (github)
 
 5.if i am on branch1 and some changes on this branch and then commit "1st change" and does not push the code 
-    and i move branch2 and commit and push the code and again move branch1 and again some changes then again commit "2nd change" and now i push branch1 
+    and i move branch2 and commit and push the code and again move branch1 and again some changes then again commit "2nd change" and now i push branch1 code
     so both commit push on remote server (github)
 
 
