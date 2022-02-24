@@ -65,5 +65,31 @@ github features-
     7-git push origin branch-name
 
 git branch --all                                //list of your local branch
+git init
+git remote -v                                   //check which origin connect
 
 3.if i have push any branch so this branch push on checkout branch not a main branch 
+
+--issues
+
+•	if you need to save your changes temporary without affecting existing code - git stash save "message here"
+
+•	whenever your new branch would push you can create the PR option on github (what ever source control uses).
+Note - this all are totally basic thing on git and necessary for project startups.
+
+•	pull - Equivalent to git fetch + git merge. Pull will bring the currently checked out branch up to date with the equivalent origin branch.
+•	git pull --rebase - Rebase the current branch to the HEAD of the origin branch.
+•	Note: many git commands work off of local files, so be sure to pull necessary remote changes if they're relevant.
+
+•	push - Publish local commits to the origin branch.
+•	git push --force-with-lease - Used after a rebase to allow changes to be published safely. This command will fail if other changes have been published to the origin branch.
+
+•	git add -u - Stage all currently changed files that are tracked by git.
+•	git add *.ts - Stage all currently changed files that end with .ts.
+
+•	diff - Displays active changes to tracked files.
+	•	By default displays differences between your active changes and previous commit. 
+	•	By default uses command line to display differences, but can be configured to use your editor of choice.
+	•	git diff <specific/file/name/or/directory/path> - Displays only the differences to the mentioned file or path of files
+	•	git diff -b <other_branch> <optional file path> - Used to compare your total branch's changes (including uncommitted active changes) to another branch. Useful when tidying up release features to make sure only intended changes are going through.
+	•	git diff <commit hash> - Compare current branch state with specific commit.
