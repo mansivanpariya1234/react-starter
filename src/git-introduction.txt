@@ -1,0 +1,54 @@
+//////////---------git command-------------////////////
+--what is github?
+  GitHub is a code hosting platform for collaboration and version control.
+  GitHub lets you (and others) work together on projects.
+
+github features-
+1.easy project management
+2.improve code write
+3.secure
+4.
+
+1.you don't have any code
+    1-git clone                                //copy master file
+    2-git checkout -b branch-name              //create a new branch
+    3-git status                               //check which file changed 
+    4-git add .                                //add file locally (here "." //means all files)
+    5-git add src/pages/home.js                //add particular file
+    6-git commit -m "message"                  //all changes commit
+    7-git push origin branch-name              //push commit files on github
+
+2.if you are work all ready created branch
+    1-git checkout branch-name                 //move to existing branch
+    2-git fetch --all                          //fetch all branch from github
+    3-git pull origin branch-name              //all the changes implements in current branch
+    4-git status
+    5-git add .
+    6-git commit -m "some-message"
+    7-git push origin branch-name
+
+3.how to create child branch from sub branch
+    1-git checkout branch-name
+    2-git checkout -b (new branch name) (sub branch name)        //create a child branch from sub branch (ex. git checkout -b child-table parent-table)
+    3-git push origin new branch name                            //a new branch push remote server (github) (ex. git push origin child-table) 
+    
+    git flow = main
+                |
+            1.parent-table -> child-table
+            2.parent-notification
+
+    (here, we have "main branch" and main branch inside a two sub branch 1st "parent-table" and 2nd "parent-notification" and also 1st "parent-table" branch inside child branch "child-table")
+
+4.if some create a new branch and this new branch inside a new folder so how to get this new branch and new files
+    1-git checkout branch-name                 //move to another branch
+    2-git fetch --all                          //fetch all old and new branch
+    3-git pull origin branch name              //all the new changes and new files updated in your current active branch
+
+
+git branch --all                                //list of your local branch
+git init
+git remote -v                                   //check which origin connect
+git branch -D branch-name                       //delete local branch
+git push origin --delete branch-name            //delete remote branch (github)
+
+3.if i have push any branch so this branch push on checkout branch not a main branch 
