@@ -67,6 +67,8 @@ github features-
 git branch --all                                //list of your local branch
 git init
 git remote -v                                   //check which origin connect
+git branch -D branch-name                       //delete local branch
+git push origin --delete branch-name            //delete remote branch (github)
 
 3.if i have push any branch so this branch push on checkout branch not a main branch 
 
