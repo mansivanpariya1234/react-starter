@@ -55,5 +55,10 @@ git push origin --delete branch-name            //delete remote branch (github)
     and i move branch2 and commit and push the code and again move branch1 and again some changes then again commit "2nd change" and now i push branch1 code
     so both commit push on remote server (github)
 
+6.if i can fetch childtable branch all files in tableimplement branch in remote server(github)
+    1-git checkout tableimplement               //move tableimplement branch  
+    2-git fetch --all                           //fetch all new and old branch
+    3-git merge childtable                      //merge child table in tableimplement branch so all files and changes implement in tableimplement branch (merge only locally server)
+    4-git push origin tableimplement            //push your current branch in remote server(github)
 
 3.if i have push any branch so this branch push on checkout branch not a main branch 
